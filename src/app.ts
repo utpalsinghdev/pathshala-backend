@@ -5,6 +5,8 @@ import morgan from "morgan";
 import cors from "cors";
 import testrou from "./test/test.routes";
 import notesRoute from "./Notes/notes.routes";
+import classRoutes from './Class/class.routes'
+import chapterRoutes from './Chapters/chapters.routes'
 const app = express();
 app.use(morgan("dev"))
 app.use(express.json());
@@ -20,18 +22,17 @@ app.use(cors({
 
 app.use("/api/test", testrou)
 app.use("/api/notes", notesRoute)
+app.use("/api/class", classRoutes)
+app.use("/api/chapter", chapterRoutes)
 
 app.use((req: Request, res: Response, next: NextFunction) => {
     next(createHttpError(404, "Endpoint Not found"))
 });
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-    res.status(err.status || 500);
-    res.send({
-        error: {
-            status: err.status || 500,
-            message: err.message,
-        },
+    res.status(err.status || 500).json({
+        success: false,
+        message: err.message
     });
 });
 
