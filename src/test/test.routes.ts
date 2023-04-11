@@ -6,6 +6,6 @@ import { healthCheck } from "./test.controller";
 const router = Router();
 
 
-router.get("/health", healthCheck);
+router.get("/", healthCheck);
 
 export default router;
