@@ -21,8 +21,10 @@ model User {
   role      Role
   email     String   @unique
   password  String
-  createdAt DateTime @default(now())
   classId   Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   Class Class? @relation(fields: [classId], references: [class_id])
 }
@@ -30,9 +32,11 @@ model User {
 model Class {
   class_id  Int       @id @unique @default(autoincrement())
   name      String    @unique
-  createdAt DateTime  @default(now())
   users     User[]
   Chapters  Chapter[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Chapter {
@@ -40,7 +44,9 @@ model Chapter {
   name       String   @unique
   notes      Note[]
   classId    Int
-  createdAt  DateTime @default(now())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   Class Class? @relation(fields: [classId], references: [class_id], onDelete: Cascade)
 }
@@ -49,8 +55,10 @@ model Note {
   notes_id  Int      @id @unique @default(autoincrement())
   name      String   @unique
   link      String
-  createdAt DateTime @default(now())
   chapterId Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   Chapter Chapter? @relation(fields: [chapterId], references: [chapter_id], onDelete: Cascade)
 }
