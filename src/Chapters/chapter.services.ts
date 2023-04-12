@@ -4,16 +4,16 @@ import { getClassById } from '../Class/class.model';
 import { throwHttpError } from '../utils/utils';
 
 async function addChapter(Payload: addPayload) {
-    const getChapter = await chapterModel.getChapterByName(Payload.name);
-
-    if (getChapter?.name === Payload.name && getChapter?.classId === Payload.classId) {
-        throwHttpError(409, "Chapter already exists");
-    }
-
     const getClass = await getClassById(Payload.classId);
 
     if (!getClass) {
         throwHttpError(404, "Class not Found");
+    }
+
+    const getChapter = await chapterModel.getChapterByName(Payload.name);
+
+    if (getChapter?.name === Payload.name && getChapter?.classId === Payload.classId) {
+        throwHttpError(409, "Chapter already exists");
     }
 
     return chapterModel.addChapter(Payload);
