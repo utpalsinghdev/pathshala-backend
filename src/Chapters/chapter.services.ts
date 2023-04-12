@@ -1,57 +1,62 @@
-import * as chapterModel from './chapter.model'
-import { updatePayload, addPayload } from './chapter.model'
-import { CustomError } from '../utils/utils'
+import * as chapterModel from './chapter.model';
+import { updatePayload, addPayload } from './chapter.model';
+import { getClassById } from '../Class/class.model';
+import { throwHttpError } from '../utils/utils';
+
 async function addChapter(Payload: addPayload) {
+    const getChapter = await chapterModel.getChapterByName(Payload.name);
 
-    const getChapter = await chapterModel.getChapterByName(Payload.name)
-
-    if (getChapter) {
-        const error: CustomError = new Error("Chapter already exists");
-        error.statusCode = 409;
-        throw error;
+    if (getChapter?.name === Payload.name && getChapter?.classId === Payload.classId) {
+        throwHttpError(409, "Chapter already exists");
     }
 
-    const chapter = await chapterModel.addChapter(Payload)
+    const getClass = await getClassById(Payload.classId);
 
-    return chapter
+    if (!getClass) {
+        throwHttpError(404, "Class not Found");
+    }
+
+    return chapterModel.addChapter(Payload);
 }
 
 async function updateChapter(id: number, Payload: updatePayload) {
-    const getChapter = await chapterModel.getAllChaptersById(id)
-    if (!getChapter) {
-        const error: CustomError = new Error("Chapter not Found");
-        error.statusCode = 404;
-        throw error;
+    const { name, classId } = await chapterModel.getAllChaptersById(id) || {};
+
+    const getClass = await getClassById(Payload.classId);
+
+
+    if (!getClass) {
+        throwHttpError(404, "Class not Found");
     }
 
-    const Chaptername = await chapterModel.getChapterByName(Payload.name)
-    if (Chaptername) {
-        const error: CustomError = new Error("Chapter already exists");
-        error.statusCode = 409;
-        throw error;
+    if (!name) {
+        throwHttpError(404, "Chapter not Found");
     }
-    const chapter = await chapterModel.updateChapter(id, Payload)
-    return chapter
+
+    const chapterName = await chapterModel.getChapterByName(Payload.name);
+
+    if (chapterName && (chapterName.name !== name || chapterName.classId !== classId)) {
+        throwHttpError(409, "Chapter already exists");
+    }
+
+
+
+
+    return chapterModel.updateChapter(id, Payload);
 }
 
 async function deleteChapter(id: number) {
-    const getChapter = await chapterModel.getAllChaptersById(id)
-    if (!getChapter) {
-        const error: CustomError = new Error("Chapter not Found");
-        error.statusCode = 404;
-        throw error;
+    const chapter = await chapterModel.getAllChaptersById(id);
+
+    if (!chapter) {
+        throwHttpError(404, "Chapter not Found");
     }
-    const chapter = await chapterModel.deleteChapter(id)
-    return chapter
+
+    return chapterModel.deleteChapter(id);
 }
 
-async function allChapters(id: number) {
-    if (id) {
-        const chapters = await chapterModel.getAllChaptersByClassId(id)
-        return chapters
-    }
-    const chapters = await chapterModel.getAllChapters()
-    return chapters
+async function allChapters(id?: number) {
+    return id ? chapterModel.getAllChaptersByClassId(id) : chapterModel.getAllChapters();
 }
 
-export { addChapter, updateChapter, allChapters, deleteChapter }
+export { addChapter, updateChapter, allChapters, deleteChapter };

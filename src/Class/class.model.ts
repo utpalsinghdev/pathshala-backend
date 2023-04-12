@@ -23,7 +23,17 @@ async function getAllClass() {
 
     return classes
 }
+async function getClassById(id: number) {
+    const getClass = await prisma.class.findUnique({
+        where: {
+            class_id: id
 
+        }
+    })
+
+    return getClass
+
+}
 async function updateClass(id: number, name: string) {
     const updatedCLass = await prisma.class.update({
         where: {
@@ -53,4 +63,4 @@ async function deleteClass(id: number) {
 }
 
 
-export { addClass, getAllClass, updateClass, deleteClass }
+export { addClass, getAllClass, updateClass, deleteClass, getClassById }

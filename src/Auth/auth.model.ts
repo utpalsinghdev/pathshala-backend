@@ -23,6 +23,7 @@ async function addUser(userPayload: UserInput) {
 
     return user
 }
+
 async function updateUser(id: number, updatePayload: UserUpdate) {
     const user = await prisma.user.update({
         where: {
