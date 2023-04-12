@@ -3,14 +3,14 @@ const prisma = new PrismaClient()
 
 
 async function addClass(name: string) {
-    const newClass = await prisma.class.create({
+    const Class = await prisma.class.create({
         data: {
             name
         }
 
     })
 
-    return { class: newClass }
+    return Class
 }
 
 async function getAllClass() {
@@ -24,18 +24,29 @@ async function getAllClass() {
     return classes
 }
 async function getClassById(id: number) {
-    const getClass = await prisma.class.findUnique({
+    const Class = await prisma.class.findUnique({
         where: {
             class_id: id
 
         }
     })
 
-    return getClass
+    return Class
+
+}
+async function getClassByName(name: string) {
+    const Class = await prisma.class.findUnique({
+        where: {
+            name: name
+
+        }
+    })
+
+    return Class
 
 }
 async function updateClass(id: number, name: string) {
-    const updatedCLass = await prisma.class.update({
+    const Class = await prisma.class.update({
         where: {
             class_id: id
         },
@@ -43,10 +54,10 @@ async function updateClass(id: number, name: string) {
             name
         }
     })
-    return { class: updatedCLass }
+    return Class
 }
 async function deleteClass(id: number) {
-    const deleteClass = await prisma.class.delete({
+    const Class = await prisma.class.delete({
         where: {
             class_id: id
         },
@@ -59,8 +70,8 @@ async function deleteClass(id: number) {
         }
     })
 
-    return { class: deleteClass }
+    return Class
 }
 
 
-export { addClass, getAllClass, updateClass, deleteClass, getClassById }
+export { addClass, getAllClass, updateClass, deleteClass, getClassById, getClassByName }

@@ -1,11 +1,15 @@
+import { throwHttpError } from "../utils/utils"
 import * as ClassModel from "./class.model"
 
 
 async function addClass(name: string) {
-    const NewClass = await ClassModel.addClass(name)
+    const Class = await ClassModel.getClassByName(name)
 
-    return NewClass
+    if (Class) {
+        throwHttpError(409, "Class Already Exists")
+    }
 
+    return ClassModel.addClass(name)
 }
 
 async function getAllClasses() {
@@ -15,15 +19,29 @@ async function getAllClasses() {
 }
 
 async function updateClass(id: number, name: string) {
-    const updatedCLass = await ClassModel.updateClass(id, name)
+    const ClassById = await ClassModel.getClassById(id)
 
-    return updatedCLass
+    if (!ClassById) {
+        throwHttpError(404, "Class not Found")
+    }
+
+    const Class = await ClassModel.getClassByName(name)
+
+    if (Class) {
+        throwHttpError(409, "Class Already Exists")
+    }
+
+    return ClassModel.updateClass(id, name)
 }
 
 async function deleteClass(id: number) {
-    const deleteClass = await ClassModel.deleteClass(id)
+    const ClassById = await ClassModel.getClassById(id)
+    
+    if (!ClassById) {
+        throwHttpError(404, "Class not Found")
+    }
 
-    return deleteClass
+    return ClassModel.deleteClass(id)
 }
 
 export { addClass, getAllClasses, updateClass, deleteClass }
