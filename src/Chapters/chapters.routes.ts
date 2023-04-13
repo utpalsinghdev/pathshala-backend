@@ -1,11 +1,16 @@
 import { Router } from "express";
-import { createChapter, updateChapter, getAllChapters, removeChapter } from './chpater.controller'
+import { createChapter, updateChapter, getAllChapters, removeChapter, getOneChapter } from './chpater.controller'
+import { verify } from "../utils/verifyToken";
 const router = Router();
 
-router.post("/add", createChapter);
-router.get("/all", getAllChapters);
-router.put("/update/:id", updateChapter);
-router.delete("/delete/:id", removeChapter);
+//Admin Routes Only
+router.post("/add", verify, createChapter);
+router.put("/update/:id", verify, updateChapter);
+router.delete("/delete/:id", verify, removeChapter);
+
+//Admin and Student Routes
+router.get("/:id", verify, getOneChapter);
+router.get("/", verify, getAllChapters);
 
 
 export default router;

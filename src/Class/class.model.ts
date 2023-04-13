@@ -28,6 +28,9 @@ async function getClassById(id: number) {
         where: {
             class_id: id
 
+        },
+        include:{
+            Chapters : true
         }
     })
 

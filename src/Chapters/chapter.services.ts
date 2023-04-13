@@ -56,7 +56,18 @@ async function deleteChapter(id: number) {
 }
 
 async function allChapters(id?: number) {
+
     return id ? chapterModel.getAllChaptersByClassId(id) : chapterModel.getAllChapters();
 }
+async function getOneChapter(id?: number) {
 
-export { addChapter, updateChapter, allChapters, deleteChapter };
+    const chapter = await chapterModel.getAllChaptersById(id);
+
+    if (!chapter) {
+        throwHttpError(404, "Chapter Not Found")
+    }
+
+    return chapter
+}
+
+export { addChapter, updateChapter, allChapters, deleteChapter, getOneChapter };

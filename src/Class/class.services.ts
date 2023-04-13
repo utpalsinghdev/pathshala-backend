@@ -17,6 +17,13 @@ async function getAllClasses() {
 
     return classes
 }
+async function getOneClass(id) {
+    const classes = await ClassModel.getClassById(id)
+    if(!classes){
+        throwHttpError(404, "Class Not Found")
+    }
+    return classes
+}
 
 async function updateClass(id: number, name: string) {
     const ClassById = await ClassModel.getClassById(id)
@@ -44,4 +51,4 @@ async function deleteClass(id: number) {
     return ClassModel.deleteClass(id)
 }
 
-export { addClass, getAllClasses, updateClass, deleteClass }
+export { addClass, getAllClasses, updateClass, deleteClass,getOneClass }

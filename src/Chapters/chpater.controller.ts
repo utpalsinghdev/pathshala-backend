@@ -1,9 +1,20 @@
 import createHttpError from 'http-errors';
 import * as services from './chapter.services'
 import { NextFunction, Request, Response } from 'express';
+import { Role } from '@prisma/client';
+interface AuthenticatedRequest extends Request {
+    payload: {
+        role: Role;
+        classId: string;
+    };
+}
 
-async function createChapter(req: Request, res: Response, next: NextFunction): Promise<void> {
+async function createChapter(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
+        if (req.payload.role !== Role.ADMIN) {
+            return res.status(403).json({ success: false, message: 'Forbidden: You are not authorized to access this operation' });
+        }
+
         const newChapter = await services.addChapter(req.body)
 
         if (newChapter) {
@@ -15,12 +26,16 @@ async function createChapter(req: Request, res: Response, next: NextFunction): P
         }
 
     } catch (error) {
-        next(createHttpError(error.statusCode, error.message))
+        next(createHttpError(error.statusCode || 500, error.message))
     }
 }
 
-async function updateChapter(req: Request, res: Response, next: NextFunction): Promise<void> {
+async function updateChapter(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
+        if (req.payload.role !== Role.ADMIN) {
+            return res.status(403).json({ success: false, message: 'Forbidden: You are not authorized to access this resource' });
+        }
+
         const id = parseInt(req.params.id)
 
         const newChapter = await services.updateChapter(id, req.body)
@@ -33,12 +48,16 @@ async function updateChapter(req: Request, res: Response, next: NextFunction): P
             })
         }
     } catch (error) {
-        next(createHttpError(error.statusCode, error.message))
+        next(createHttpError(error.statusCode || 500, error.message))
     }
 }
 
-async function removeChapter(req: Request, res: Response,next: NextFunction): Promise<void> {
+async function removeChapter(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
+        if (req.payload.role !== Role.ADMIN) {
+            return res.status(403).json({ success: false, message: 'Forbidden: You are not authorized to access this resource' });
+        }
+
         const id = parseInt(req.params.id)
 
         const deleteClass = await services.deleteChapter(id)
@@ -51,16 +70,20 @@ async function removeChapter(req: Request, res: Response,next: NextFunction): Pr
             })
         }
     } catch (error) {
-        next(createHttpError(error.statusCode, error.message))
+        next(createHttpError(error.statusCode || 500, error.message))
     }
 }
 
-async function getAllChapters(req: Request, res: Response): Promise<void> {
+async function getAllChapters(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-        const id = parseInt(req.headers.authorization)
+        // if (req.payload.role !== Role.ADMIN) {
+        //     return res.status(403).json({ success: false, message: 'Forbidden: You are not authorized to access this resource' });
+        // }
+
+        const id = parseInt(req.payload.classId)
 
         const chapters = await services.allChapters(id)
-        
+
         if (chapters) {
             res.status(200).json({
                 success: true,
@@ -69,14 +92,29 @@ async function getAllChapters(req: Request, res: Response): Promise<void> {
             })
         }
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message
-        });
+        next(createHttpError(error.statusCode || 500, error.message))
+    }
+}
+async function getOneChapter(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+
+        const id = parseInt(req.params.id)
+
+        const chapters = await services.getOneChapter(id)
+
+        if (chapters) {
+            res.status(200).json({
+                success: true,
+                message: "Chapter fetched successfully",
+                data: chapters
+            })
+        }
+    } catch (error) {
+        next(createHttpError(error.statusCode || 500, error.message))
     }
 }
 
 export {
-    createChapter, getAllChapters, removeChapter, updateChapter
+    createChapter, getAllChapters, removeChapter, updateChapter,getOneChapter
 }
 

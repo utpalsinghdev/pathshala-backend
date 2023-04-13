@@ -3,4 +3,5 @@ import { port, str } from "envalid/dist/validators";
 
 export default cleanEnv(process.env, {
     PORT: port(),
+    JWT_SECRET: str(),
 });

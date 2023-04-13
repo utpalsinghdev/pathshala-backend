@@ -41,7 +41,10 @@ async function getAllChaptersById(id: number) {
             where: {
                 chapter_id: id
             },
-           
+            include: {
+                Class: true
+            }
+
 
         }
     )
@@ -63,10 +66,10 @@ async function getAllChapters() {
 
 
 
-async function getChapterByName(name : string) {
+async function getChapterByName(name: string) {
     const chapter = await prisma.chapter.findUnique({
         where: {
-            name : name
+            name: name
         }
     })
     return chapter
@@ -99,4 +102,4 @@ async function deleteChapter(id: number) {
 }
 
 
-export { addChapter, updateChapter, deleteChapter, getAllChapters, getAllChaptersByClassId,getChapterByName,getAllChaptersById }
+export { addChapter, updateChapter, deleteChapter, getAllChapters, getAllChaptersByClassId, getChapterByName, getAllChaptersById }

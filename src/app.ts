@@ -7,6 +7,7 @@ import testrou from "./test/test.routes";
 import notesRoute from "./Notes/notes.routes";
 import classRoutes from './Class/class.routes'
 import chapterRoutes from './Chapters/chapters.routes'
+import authRoutes from './Auth/auth.routes'
 const app = express();
 app.use(morgan("dev"))
 app.use(express.json());
@@ -24,6 +25,7 @@ app.use("/api/test", testrou)
 app.use("/api/notes", notesRoute)
 app.use("/api/class", classRoutes)
 app.use("/api/chapter", chapterRoutes)
+app.use("/api/auth", authRoutes)
 
 app.use((req: Request, res: Response, next: NextFunction) => {
     next(createHttpError(404, "Endpoint Not found"))

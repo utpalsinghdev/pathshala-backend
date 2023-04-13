@@ -1,11 +1,14 @@
 import { Router } from "express";
-import { createClass, getAllClass, removeClass, updateClass } from "./class.controller";
+import { createClass, getAllClass, getOneClass, removeClass, updateClass } from "./class.controller";
+import { verify } from "../utils/verifyToken";
 
 const router = Router();
 
-router.post("/add", createClass);
-router.get("/all", getAllClass);
-router.put("/update/:id", updateClass);
-router.delete("/delete/:id", removeClass);
+//Only Admin Route
+router.get("/", verify, getAllClass);
+router.get("/:id", verify, getOneClass);
+router.post("/add", verify, createClass);
+router.put("/update/:id", verify, updateClass);
+router.delete("/delete/:id", verify, removeClass);
 
 export default router;
