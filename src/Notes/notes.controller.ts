@@ -1,34 +1,23 @@
-import { PrismaClient } from '@prisma/client'
 import { NextFunction, Request, RequestHandler, Response } from "express";
-import { v2 as cloudinary } from "cloudinary";
-import env from "../utils/validateEnv"
+import * as services from "./notes.services";
+import createHttpError from "http-errors";
+import { Role } from "@prisma/client";
 
+interface AuthenticatedRequest extends Request {
+    payload: {
+        role: Role;
+    };
+}
 
-cloudinary.config({
-    cloud_name: env.CLOUDINARY_CLOUD_NAME,
-    api_key: env.CLOUDINARY_CLOUD_API_KEY,
-    api_secret: env.CLOUDINARY_CLOUD_API_SECRET
-});
-
-
-
-
-export async function createPost(req :Request, res : Response, next : NextFunction) {
-    const { name, prompt, photo } = req.body;
+export async function createPost(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-
-        console.log("started");
-        const photoRes = await cloudinary.uploader.upload(photo);
-        console.log("uploaded");
-        if (photoRes) {
-            console.log(photoRes.secure_url);
-
+        if (req.payload.role !== Role.ADMIN) {
+            return res.status(403).json({ success: false, message: 'Forbidden: You are not authorized to access this operation' });
         }
-        res.status(201).json({ success: true, message: "Image Uploaded SuccessFully 🔥", data: photoRes.secure_url });
+        const note = await services.addNotes(req.body);
+        res.status(201).json({ success: true, message: "Notes Uploaded SuccessFully ", data: note });
     } catch (error) {
-        res.status(500).json({
-            message: error.message
-        });
+        next(createHttpError(error.statusCode || 500, error.message))
 
     }
 }

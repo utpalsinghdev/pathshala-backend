@@ -13,12 +13,12 @@ enum Role {
 }
 
 model User {
-  id        Int      @id @unique @default(autoincrement())
-  name      String
-  role      Role
-  email     String   @unique
-  password  String
-  classId   Int?
+  id       Int    @id @unique @default(autoincrement())
+  name     String
+  role     Role
+  email    String @unique
+  password String
+  classId  Int?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -27,18 +27,19 @@ model User {
 }
 
 model Class {
-  class_id  Int       @id @unique @default(autoincrement())
-  name      String    @unique
-  users     User[]
-  Chapters  Chapter[]
+  class_id Int       @id @unique @default(autoincrement())
+  name     String    @unique
+  users    User[]
+  Chapters Chapter[]
+  Note      Note[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Chapter {
-  chapter_id Int      @id @unique @default(autoincrement())
-  name       String   @unique
+  chapter_id Int    @id @unique @default(autoincrement())
+  name       String @unique
   notes      Note[]
   classId    Int
 
@@ -52,10 +53,11 @@ model Note {
   notes_id  Int      @id @unique @default(autoincrement())
   name      String   @unique
   link      String
-  chapterId Int
-
+  chapterId Int?
+  classId   Int?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  Chapter Chapter? @relation(fields: [chapterId], references: [chapter_id], onDelete: Cascade)
+  Class   Class?   @relation(fields: [classId], references: [class_id])
+  Chapter Chapter? @relation(fields: [chapterId], references: [chapter_id])
 }
