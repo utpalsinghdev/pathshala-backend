@@ -2,9 +2,14 @@ import { NextFunction, Request, Response } from 'express';
 import * as AuthServices from './auth.services'
 import createHttpError from 'http-errors';
 import { Role } from '@prisma/client';
+import { CreateUserSchema, loginSchema, userUpdateSchema } from '../utils/schema';
 
 async function login(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
+    const { error } = loginSchema.validate(req.body)
+    if (error) {
+      return next(createHttpError(400, error.message))
+    }
     const body = req.body
     const { token, user } = await AuthServices.login(body.email, body.password)
 
@@ -31,11 +36,19 @@ interface AuthenticatedRequest extends Request {
 
 async function createUser(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   try {
-    const { name, email, password, role, classId } = req.body;
-
     if (req.payload.role !== Role.ADMIN) {
       return res.status(403).json({ success: false, message: 'Forbidden: You are not authorized to access this resource' });
     }
+    
+    const { error } = CreateUserSchema.validate(req.body)
+
+    if (error) {
+      return next(createHttpError(400, error.message))
+    }
+
+    const { name, email, password, role, classId } = req.body;
+
+    
 
     const user = await AuthServices.register(name, email, password, role, classId);
 
@@ -73,7 +86,10 @@ async function updateUser(req: AuthenticatedRequest, res: Response, next: NextFu
     if (req.payload.role !== Role.ADMIN) {
       return res.status(403).json({ success: false, message: 'Forbidden: You are not authorized to access this resource' });
     }
-
+    const {error} = userUpdateSchema.validate(req.body)
+    if (error) {
+      return next(createHttpError(400, error.message))
+    }
     const id = parseInt(req.params.id)
 
     const user = await AuthServices.updateUser(id, req.body);

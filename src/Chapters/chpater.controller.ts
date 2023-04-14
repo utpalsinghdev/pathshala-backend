@@ -2,6 +2,7 @@ import createHttpError from 'http-errors';
 import * as services from './chapter.services'
 import { NextFunction, Request, Response } from 'express';
 import { Role } from '@prisma/client';
+import { chapterSchema } from '../utils/schema';
 interface AuthenticatedRequest extends Request {
     payload: {
         role: Role;
@@ -13,6 +14,12 @@ async function createChapter(req: AuthenticatedRequest, res: Response, next: Nex
     try {
         if (req.payload.role !== Role.ADMIN) {
             return res.status(403).json({ success: false, message: 'Forbidden: You are not authorized to access this operation' });
+        }
+
+        const {error } = chapterSchema.validate(req.body)
+
+        if (error) {
+            return next(createHttpError(400, error.message))
         }
 
         const newChapter = await services.addChapter(req.body)
@@ -36,7 +43,15 @@ async function updateChapter(req: AuthenticatedRequest, res: Response, next: Nex
             return res.status(403).json({ success: false, message: 'Forbidden: You are not authorized to access this resource' });
         }
 
+        
+
         const id = parseInt(req.params.id)
+
+        const {error } = chapterSchema.validate(req.body)
+
+        if (error) {
+            return next(createHttpError(400, error.message))
+        }
 
         const newChapter = await services.updateChapter(id, req.body)
 
@@ -76,9 +91,6 @@ async function removeChapter(req: AuthenticatedRequest, res: Response, next: Nex
 
 async function getAllChapters(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-        // if (req.payload.role !== Role.ADMIN) {
-        //     return res.status(403).json({ success: false, message: 'Forbidden: You are not authorized to access this resource' });
-        // }
 
         const id = parseInt(req.payload.classId)
 
