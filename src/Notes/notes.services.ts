@@ -21,14 +21,17 @@ interface AddNote {
 }
 
 async function addNotes(payload: AddNote) {
+    var publicId = "Pathshala/";
 
-    if (payload.chapterId) {
-        const chapter = await getAllChaptersById(payload.chapterId);
+    const currentDate = new Date();
 
-        if (!chapter) {
-            throwHttpError(404, 'Chapter not found');
-        }
-    }
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const year = String(currentDate.getFullYear());
+
+    const formattedDate = `${day} ${month} ${year}`;
+
+
 
     if (payload.classId) {
         const Class = await getClassById(payload.classId);
@@ -36,10 +39,32 @@ async function addNotes(payload: AddNote) {
         if (!Class) {
             throwHttpError(404, 'Class not found');
         }
+
+        publicId += `${Class.name}/`;
     }
 
-    
-    const photoRes = await cloudinary.uploader.upload(payload.notesBase64);
+    if (payload.chapterId) {
+        const chapter = await getAllChaptersById(payload.chapterId);
+
+        if (!chapter) {
+            throwHttpError(404, 'Chapter not found');
+        }
+
+        publicId += `${chapter.name}/`;
+    }
+
+
+
+
+    publicId += `${payload.name}_${formattedDate}`;
+
+    console.log(publicId)
+    const photoRes = await cloudinary.uploader.upload(payload.notesBase64,
+        {
+            folder: "notes",
+            public_id: publicId,
+            resource_type: "auto"
+        });
 
 
     return model.AddNotes({
