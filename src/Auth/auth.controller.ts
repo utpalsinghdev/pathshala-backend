@@ -39,7 +39,7 @@ async function createUser(req: AuthenticatedRequest, res: Response, next: NextFu
     if (req.payload.role !== Role.ADMIN) {
       return res.status(403).json({ success: false, message: 'Forbidden: You are not authorized to access this resource' });
     }
-    
+
     const { error } = CreateUserSchema.validate(req.body)
 
     if (error) {
@@ -48,7 +48,7 @@ async function createUser(req: AuthenticatedRequest, res: Response, next: NextFu
 
     const { name, email, password, role, classId } = req.body;
 
-    
+
 
     const user = await AuthServices.register(name, email, password, role, classId);
 
@@ -86,7 +86,7 @@ async function updateUser(req: AuthenticatedRequest, res: Response, next: NextFu
     if (req.payload.role !== Role.ADMIN) {
       return res.status(403).json({ success: false, message: 'Forbidden: You are not authorized to access this resource' });
     }
-    const {error} = userUpdateSchema.validate(req.body)
+    const { error } = userUpdateSchema.validate(req.body)
     if (error) {
       return next(createHttpError(400, error.message))
     }
@@ -122,6 +122,33 @@ async function deleteUser(req: AuthenticatedRequest, res: Response, next: NextFu
     next(createHttpError(error.statusCode || 500, error.message));
   }
 }
+async function getOneUser(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+  try {
+    if (req.payload.role !== Role.ADMIN) {
+      return res.status(403).json({ success: false, message: 'Forbidden: You are not authorized to access this resource' });
+    }
+
+    const id = parseInt(req.params.id)
+
+    const user = await AuthServices.getUserByUniqueId(id);
+
+    res.status(200).json({
+      success: true,
+      message: "User Fetched successfully",
+      data: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        classId: user.classId,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt
+      },
+    });
+  } catch (error) {
+    next(createHttpError(error.statusCode || 500, error.message));
+  }
+}
 
 
 
@@ -131,5 +158,6 @@ export {
   login,
   getAllUsers,
   updateUser,
-  deleteUser
+  deleteUser,
+  getOneUser
 }

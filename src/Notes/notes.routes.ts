@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { addNotes } from "./notes.controller";
-
+import {  createPost } from "./notes.controller";
 const router = Router();
 
-router.post("/add/:id", addNotes);
+router.post("/add", createPost);
+
 
 export default router;

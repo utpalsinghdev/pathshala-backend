@@ -3,6 +3,7 @@ import {
     createUser,
     deleteUser,
     getAllUsers,
+    getOneUser,
     login,
     updateUser
 } from './auth.controller'
@@ -14,6 +15,7 @@ router.post("/register", verify, createUser);
 router.get("/users", verify, getAllUsers)
 router.put("/update/:id", verify, updateUser)
 router.delete("/delete/:id", verify, deleteUser)
+router.get("/:id", verify, getOneUser)
 
 
 
