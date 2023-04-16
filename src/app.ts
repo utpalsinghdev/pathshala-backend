@@ -1,8 +1,8 @@
 import "dotenv/config"
 import express, { NextFunction, Request, Response } from "express";
-import createHttpError, { isHttpError } from "http-errors";
+import createHttpError from "http-errors";
 import morgan from "morgan";
-import cors from "cors";
+import cors from "cors"; 
 import testrou from "./test/test.routes";
 import notesRoute from "./Notes/notes.routes";
 import classRoutes from './Class/class.routes'

@@ -58,7 +58,7 @@ async function addNotes(payload: AddNote) {
 
     publicId += `${payload.name}_${formattedDate}`;
 
-    console.log(publicId)
+    // console.log(publicId)
     const photoRes = await cloudinary.uploader.upload(payload.notesBase64,
         {
             folder: "notes",
@@ -66,14 +66,24 @@ async function addNotes(payload: AddNote) {
             resource_type: "auto"
         });
 
-
+    console.log(photoRes)
     return model.AddNotes({
         name: payload.name,
         link: photoRes.secure_url,
         chapterId: payload.chapterId ? payload.chapterId : undefined,
-        classId: payload.classId ? payload.classId : undefined
+        classId: payload.classId ? payload.classId : undefined,
+        publicId: photoRes.public_id
     });
 }
 
 
-export { addNotes }
+async function getAllNotes(id: number) {
+
+    if (id) {
+        return model.AllNotesByClassID(id)
+    }
+
+    return model.AllNotes()
+}
+
+export { addNotes, getAllNotes }

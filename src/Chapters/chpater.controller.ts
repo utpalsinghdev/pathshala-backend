@@ -92,7 +92,7 @@ async function removeChapter(req: AuthenticatedRequest, res: Response, next: Nex
 async function getAllChapters(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
 
-        const id = parseInt(req.payload.classId)
+        const id = Number(req.params.id)
 
         const chapters = await services.allChapters(id)
 
@@ -107,6 +107,7 @@ async function getAllChapters(req: AuthenticatedRequest, res: Response, next: Ne
         next(createHttpError(error.statusCode || 500, error.message))
     }
 }
+
 async function getOneChapter(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
 

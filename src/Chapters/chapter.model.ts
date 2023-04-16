@@ -7,6 +7,7 @@ export interface updatePayload {
 export interface addPayload {
     name: string;
     classId: number;
+    
 }
 async function addChapter(Payload: addPayload) {
     const chapter = await prisma.chapter.create({

@@ -53,8 +53,10 @@ model Note {
   notes_id  Int      @id @unique @default(autoincrement())
   name      String   @unique
   link      String
+  public_id  String
+  park      Boolean  @default(false)
   chapterId Int?
-  classId   Int?
+  classId   Int? 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

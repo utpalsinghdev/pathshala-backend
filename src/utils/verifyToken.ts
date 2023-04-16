@@ -15,7 +15,7 @@ export const verify = (req: AuthenticatedRequest, res: Response, next: NextFunct
         return res.status(401).json({ success : false, message: 'Authentication failed: Invalid token Or Expired' });
     }
 
-    console.log(payload)
+    // console.log(payload)
     req.payload = payload;
 
     next();

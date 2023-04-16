@@ -9,7 +9,8 @@ router.put("/update/:id", verify, updateChapter);
 router.delete("/delete/:id", verify, removeChapter);
 
 //Admin and Student Routes
-router.get("/:id", verify, getOneChapter);
+router.get("/one/:id", verify, getOneChapter);
+router.get("/:id", verify, getAllChapters);
 router.get("/", verify, getAllChapters);
 
 
