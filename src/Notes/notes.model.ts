@@ -17,9 +17,8 @@ async function AddNotes(payload: AddNote) {
         data: {
             name: payload.name,
             link: payload.link,
-            publicId: payload.publicId,
+            public_id: payload.publicId,
             chapterId: payload.chapterId,
-            classId: payload.classId
         }
 
     });
