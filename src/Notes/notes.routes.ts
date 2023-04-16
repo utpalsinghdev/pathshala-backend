@@ -4,7 +4,7 @@ import { verify } from "../utils/verifyToken";
 const router = Router();
 
 router.post("/add", verify, createPost);
-router.post("/", verify, AllNotes);
+router.get("/", verify, AllNotes);
 
 
 export default router;

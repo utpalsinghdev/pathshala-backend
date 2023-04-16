@@ -10,7 +10,7 @@ router.delete("/delete/:id", verify, removeChapter);
 
 //Admin and Student Routes
 router.get("/one/:id", verify, getOneChapter);
-router.get("/:id", verify, getAllChapters);
+router.get("/:id", verify, getAllChapters); // Get all chapters by class id
 router.get("/", verify, getAllChapters);
 
 
