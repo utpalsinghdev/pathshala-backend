@@ -120,5 +120,52 @@ const chapterSchema = Joi.object<ChapterInput>({
         'any.required': 'Class ID is required',
     }),
 });
+const updateChpater = Joi.object<ChapterInput>({
+    name: Joi.string().required().messages({
+        'string.empty': 'Name cannot be empty',
+        'any.required': 'Name is required',
+    }),
+    classId: Joi.number().optional().messages({
+        'number.base': 'Class ID must be a number',
+    }),
+});
 
-export { loginSchema, CreateUserSchema, userUpdateSchema, chapterSchema };
+const NotesUpdateSchema = Joi.object({
+    name: Joi.string().optional().messages({
+      'string.base': 'Name should be a string',
+    }),
+    chapterId: Joi.number().optional().messages({
+      'number.base': 'Chapter ID should be a number',
+    }),
+    classId: Joi.number().optional().messages({
+      'number.base': 'Class ID should be a number',
+    }),
+    park: Joi.boolean().optional().messages({
+      'boolean.base': 'Park should be a boolean value',
+    }),
+  }).or('name', 'chapterId', 'classId', 'park').messages({
+    'object.missing': 'At least one of name, chapterId, classId or park is required',
+  });
+
+
+  const addNOte = Joi.object({
+    name: Joi.string().required().messages({
+      'string.base': 'name must be a string',
+      'any.required': 'name is required',
+    }),
+    chapterId: Joi.number().integer().required().messages({
+      'number.base': 'chapterId must be a number',
+      'number.integer': 'chapterId must be an integer',
+      'any.required': 'chapterId is required',
+    }),
+    classId: Joi.number().integer().required().messages({
+      'number.base': 'classId must be a number',
+      'number.integer': 'classId must be an integer',
+      'any.required': 'classId is required',
+    }),
+    notesBase64: Joi.string().allow('').required().messages({
+      'string.base': 'notesBase64 must be a string',
+      'any.required': 'notesBase64 is required',
+    }),
+  });
+export { loginSchema, CreateUserSchema, userUpdateSchema, chapterSchema, NotesUpdateSchema, addNOte, updateChpater };

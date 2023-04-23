@@ -103,6 +103,7 @@ async function updateUser(req: AuthenticatedRequest, res: Response, next: NextFu
     next(createHttpError(error.statusCode || 500, error.message));
   }
 }
+
 async function deleteUser(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   try {
     if (req.payload.role !== Role.ADMIN) {

@@ -19,6 +19,12 @@ interface AddNote {
     chapterId?: number;
     classId?: number;
 }
+interface update {
+    name?: string;
+    chapterId?: number;
+    classId?: number;
+    park?: boolean;
+}
 
 async function addNotes(payload: AddNote) {
     var publicId = "Pathshala/";
@@ -86,4 +92,33 @@ async function getAllNotes(id: number) {
     return model.AllNotes()
 }
 
-export { addNotes, getAllNotes }
+
+async function deleteNote(id: number, value: boolean) {
+    if (!id) {
+        throwHttpError(400, "Please Enter a Valid ID")
+    }
+
+    const Note = await model.getNOteBYid(id)
+    if (!Note) {
+        throwHttpError(404, "Note not Found")
+    }
+
+    return model.updateNOtes(id, { park: value })
+
+}
+
+async function updateNotes(id: number, payload: update) {
+    if (!id) {
+        throwHttpError(400, "Please Enter a Valid ID")
+    }
+
+    const Note = await model.getNOteBYid(id)
+    if (!Note) {
+        throwHttpError(404, "Note not Found")
+    }
+
+    return model.updateNOtes(id, payload)
+
+}
+
+export { addNotes, getAllNotes, deleteNote, updateNotes }

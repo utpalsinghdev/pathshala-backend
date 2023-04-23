@@ -16,7 +16,7 @@ async function createChapter(req: AuthenticatedRequest, res: Response, next: Nex
             return res.status(403).json({ success: false, message: 'Forbidden: You are not authorized to access this operation' });
         }
 
-        const {error } = chapterSchema.validate(req.body)
+        const { error } = chapterSchema.validate(req.body)
 
         if (error) {
             return next(createHttpError(400, error.message))
@@ -43,11 +43,11 @@ async function updateChapter(req: AuthenticatedRequest, res: Response, next: Nex
             return res.status(403).json({ success: false, message: 'Forbidden: You are not authorized to access this resource' });
         }
 
-        
+
 
         const id = parseInt(req.params.id)
 
-        const {error } = chapterSchema.validate(req.body)
+        const { error } = chapterSchema.validate(req.body)
 
         if (error) {
             return next(createHttpError(400, error.message))
@@ -128,6 +128,6 @@ async function getOneChapter(req: AuthenticatedRequest, res: Response, next: Nex
 }
 
 export {
-    createChapter, getAllChapters, removeChapter, updateChapter,getOneChapter
+    createChapter, getAllChapters, removeChapter, updateChapter, getOneChapter
 }
 

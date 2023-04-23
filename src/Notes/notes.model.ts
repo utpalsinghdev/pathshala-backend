@@ -9,6 +9,14 @@ interface AddNote {
     chapterId?: number;
     classId?: number;
 }
+interface Update {
+    name?: string;
+    link?: string;
+    park?: boolean;
+    publicId?: string;
+    chapterId?: number;
+    classId?: number;
+}
 
 
 async function AddNotes(payload: AddNote) {
@@ -29,7 +37,8 @@ async function AddNotes(payload: AddNote) {
 async function AllNotesByClassID(id: number) {
     const notes = await prisma.note.findMany({
         where: {
-            classId: id
+            classId: id,
+            park: false
         },
         include: {
             Class: true,
@@ -42,10 +51,44 @@ async function AllNotesByClassID(id: number) {
 }
 async function AllNotes() {
     const notes = await prisma.note.findMany({
+        where: {
+            park: false
+        }
+    })
+
+
+    return notes
+}
+export async function AllDeletedNotes() {
+    const notes = await prisma.note.findMany({
+        where: {
+            park: true
+        }
+    })
+
+
+    return notes
+}
+async function getNOteBYid(id: number) {
+    const notes = await prisma.note.findFirst({
+        where: {
+            notes_id: id,
+        }
+    })
+
+
+    return notes
+}
+async function updateNOtes(id: number, payload: Update) {
+    const notes = await prisma.note.update({
+        where: {
+            notes_id: id,
+        },
+        data: payload
     })
 
 
     return notes
 }
 
-export { AddNotes, AllNotes, AllNotesByClassID }
+export { AddNotes, AllNotes, AllNotesByClassID, getNOteBYid, updateNOtes }
